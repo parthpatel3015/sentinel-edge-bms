@@ -2,97 +2,193 @@
 
 An ESP32-based modular Battery Management System (BMS) simulation developed using Wokwi.
 
-## Project Overview
+## 1. Project Overview
 
-This project focuses on monitoring battery cell voltages and analyzing the condition of a battery pack. The BMS program checks individual cell voltages and calculates important battery parameters such as voltage imbalance, State of Charge (SoC), adaptive threshold, imbalance trend, and battery status.
+This project focuses on monitoring individual battery cell voltages and analyzing the condition of a battery pack.
 
-The design was tested with different battery pack sizes to check whether the same analysis logic can be used for different numbers of cells.
+The BMS program analyzes cell voltage values and calculates important parameters such as:
 
-## Main Features
+- Weakest cell
+- Strongest cell
+- Minimum cell voltage
+- Maximum cell voltage
+- Voltage imbalance
+- State of Charge (SoC)
+- Adaptive imbalance threshold
+- Imbalance trend
+- Battery status
+
+The system was tested with 4-cell, 8-cell, and 16-cell battery configurations to check the scalability of the BMS analysis logic.
+
+## 2. Main Features
 
 - Individual cell voltage monitoring
-- Weakest cell identification
-- Strongest cell identification
-- Minimum and maximum cell voltage calculation
+- Weakest and strongest cell identification
+- Minimum and maximum voltage calculation
 - Voltage imbalance calculation
-- State of Charge (SoC) estimation
+- State of Charge estimation
 - Adaptive imbalance threshold
 - Imbalance trend detection
 - Imbalance fault detection
-- Support for different cell configurations
-- Serial Monitor based result display
+- Scalable cell configuration
+- Serial Monitor based output
 
-## Configurations Tested
+## 3. Configurations Tested
 
-The BMS logic was tested with:
+### 4-Cell Configuration
 
-- 4-cell battery configuration
-- 8-cell battery configuration
-- 16-cell battery configuration
+The 4-cell BMS was tested using automated test Steps 0 to 6.
 
-The 4-cell configuration was tested through multiple test steps from Step 0 to Step 6 to observe different imbalance conditions.
+Different voltage conditions were used to observe balanced operation, increasing imbalance, decreasing imbalance, and normal recovery conditions.
 
-## BMS Analysis
+### 8-Cell Configuration
 
-For every analysis cycle, the program:
+The BMS was configured for eight cells using:
 
-1. Reads the configured cell voltages.
-2. Finds the weakest and strongest cells.
-3. Calculates the minimum and maximum voltage.
-4. Calculates the voltage imbalance.
-5. Estimates the battery State of Charge.
-6. Calculates an adaptive imbalance threshold.
-7. Checks whether the imbalance is increasing, decreasing, or stable.
-8. Determines whether the battery condition is normal or an imbalance fault.
+#define NUM_CELLS 8
 
-## Adaptive Threshold
+The program successfully analyzed all eight cell voltages and identified the weakest and strongest cells.
+
+### 16-Cell Configuration
+
+The BMS was further configured for sixteen cells using:
+
+#define NUM_CELLS 16
+
+The same analysis logic was used to process all sixteen cells.
+
+## 4. BMS Analysis
+
+During each analysis cycle, the program:
+
+1. Processes the configured cell voltages.
+2. Identifies the weakest cell.
+3. Identifies the strongest cell.
+4. Finds the minimum and maximum cell voltage.
+5. Calculates voltage imbalance.
+6. Estimates the State of Charge (SoC).
+7. Calculates the adaptive imbalance threshold.
+8. Determines the imbalance trend.
+9. Determines the battery status.
+
+## 5. Voltage Imbalance
+
+Voltage imbalance is calculated as the difference between the highest and lowest cell voltage.
+
+Voltage Imbalance = Maximum Cell Voltage - Minimum Cell Voltage
+
+The calculated imbalance is compared with the adaptive threshold to determine whether an imbalance fault exists.
+
+## 6. State of Charge
+
+The project uses the average cell voltage to estimate the battery State of Charge.
+
+The estimated value is limited between 0% and 100%.
+
+## 7. Adaptive Threshold
 
 The imbalance threshold changes according to the estimated State of Charge.
 
 | State of Charge | Adaptive Threshold |
 |-----------------|-------------------|
 | 80% and above   | 0.10 V |
-| 50% – 79%       | 0.12 V |
-| 20% – 49%       | 0.15 V |
+| 50% - 79%       | 0.12 V |
+| 20% - 49%       | 0.15 V |
 | Below 20%       | 0.18 V |
 
-## Project Files
+## 8. Imbalance Trend
+
+The program compares the current imbalance with the previous imbalance.
+
+The trend is classified as:
+
+- INCREASING
+- DECREASING
+- STABLE
+
+This helps observe how the voltage difference between cells changes during testing.
+
+## 9. Battery Status
+
+The battery status is determined by comparing the calculated voltage imbalance with the adaptive threshold.
+
+If the imbalance is greater than the threshold:
+
+Battery Status: IMBALANCE FAULT
+
+Otherwise:
+
+Battery Status: NORMAL
+
+## 10. Project Files
 
 ### 4-Cell BMS
 
-`BMS_4_Cell.ino`
+BMS_4_Cell.ino
 
-Contains the 4-cell BMS test with automated test steps from Step 0 to Step 6.
+Contains the 4-cell BMS test with automated test Steps 0 to 6.
 
 ### 8-Cell BMS
 
-`BMS_8_Cell.ino`
+BMS_8_Cell.ino
 
 Contains the BMS analysis configured for an 8-cell battery pack.
 
 ### 16-Cell BMS
 
-`BMS_16_Cell.ino`
+BMS_16_Cell.ino
 
 Contains the BMS analysis configured for a 16-cell battery pack.
 
-## Development Platform
+## 11. Wokwi Simulation Links
+
+The three BMS configurations were implemented and tested using the Wokwi ESP32 simulator.
+
+### 4-Cell BMS
+
+https://wokwi.com/projects/473443955738040321
+
+### 8-Cell BMS
+
+https://wokwi.com/projects/473444401209904129
+
+### 16-Cell BMS
+
+https://wokwi.com/projects/473444531568904193
+
+## 12. Development Platform
 
 - ESP32
 - Wokwi Simulator
 - Arduino/C++
 - Serial Monitor
 
-## Testing
+## 13. Testing
 
-The system was tested using simulated cell-voltage values. The test results were observed through the Serial Monitor.
+The BMS was tested using simulated cell voltage values.
 
-The 4-cell test included different voltage conditions to observe changes in imbalance and battery status. The 8-cell and 16-cell versions were then used to demonstrate that the BMS analysis can be extended to larger battery configurations.
+The 4-cell configuration was tested through Steps 0 to 6 to observe different imbalance conditions.
 
-## Project Objective
+The 8-cell and 16-cell configurations were then tested to verify that the same BMS analysis structure could be extended to larger battery configurations.
 
-The main objective of this project is to develop a modular BMS analysis system that can monitor individual cell voltages and identify possible imbalance conditions while maintaining a scalable software structure.
+The results were observed through the Serial Monitor.
 
-## Author
+## 14. Scalability
+
+The project was designed so that the number of battery cells can be changed using the NUM_CELLS configuration.
+
+The same core analysis functions were reused for:
+
+- 4 cells
+- 8 cells
+- 16 cells
+
+This demonstrates that the BMS software structure can be extended to different battery pack sizes without rewriting the complete analysis logic.
+
+## 15. Project Objective
+
+The objective of this project is to develop a modular BMS analysis system capable of monitoring individual cell voltages, identifying voltage imbalance, estimating battery State of Charge, and detecting possible imbalance faults.
+
+## 16. Author
 
 Parth Patel
